@@ -64,7 +64,7 @@ void draw_grid(int row,int col)
             }
             else
             {
-                printf("* ");
+                printf("  ");
             }
         }
         printf("\n");
