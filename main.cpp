@@ -1,10 +1,9 @@
-
 #include<SDL2/SDL.h>
 #include <iostream>
 #include<math.h>
-#define length 500
-#define width 600
-#define n 200
+#define length 1000
+#define width 700
+#define n 250
 void render(SDL_Renderer*);
 void part_info(void);
 void collision_detection(void);
@@ -47,14 +46,14 @@ void DrawCircle(SDL_Renderer * renderer, int32_t centreX, int32_t centreY, int32
 }
 class particles{
     public:
-        float x,y,radius=5,vx=160,vy=160,dt=0.01;
+        float x,y,radius=2,vx=200,vy=200,dt=0.01;
         void move(void)
         {
             x=x+vx*dt;
             y=y+vy*dt;
         }
 };
-particles particle[500];
+particles particle[1000];
 int main(int argv,char** args )
 {
     part_info();
@@ -67,7 +66,10 @@ int main(int argv,char** args )
         SDL_SetRenderDrawColor(renderer, 0, 0, 0,255);
         render(renderer);
         SDL_RenderClear(renderer);
-
+        SDL_DestroyRenderer(renderer);
+        SDL_DestroyWindow(window);
+        SDL_Quit();
+        
        
         
         return 0;
@@ -75,13 +77,28 @@ int main(int argv,char** args )
 }
 void render(SDL_Renderer* renderer)
 {
-    while(true){
+    
+    bool quit = false;
+    SDL_Event event;
+
+    while (!quit)
+    {
+       
+        while (SDL_PollEvent(&event) != 0)
+        {
+            if (event.type == SDL_QUIT)
+            {
+                quit = true;  
+            }
+        }
         SDL_SetRenderDrawColor(renderer, 255,255,255,255);
-        collision_detection();
         particle_collision();
-        for(int i=0;i<n;i++){
+        collision_detection();
+        
+        for(int i=0;i<n;i++)
+        {
         DrawCircle(renderer,particle[i].x,particle[i].y,particle[i].radius);
-        DrawCircle(renderer,particle[i].x,particle[i].y,particle[i].radius);}
+        }
         SDL_SetRenderDrawColor(renderer, 0,0,0,255);
         SDL_RenderPresent(renderer);
         for(int i=0;i<n;i++)
@@ -90,13 +107,16 @@ void render(SDL_Renderer* renderer)
         }
         SDL_RenderClear(renderer);
     }
+    
 }
 void part_info(void)
 {
     for(int i=0;i<n;i++){
-    particle[i].x=(i+1)*5;
-    particle[i].y=(i+1)*5;
+    particle[i].x=(i+1)*4;
+    particle[i].y=(i+1)*4;
     }
+    particle[249].x=221;
+    particle[249].y=444;
 }
 void collision_detection() {
     for (int i = 0; i < n; i++) {
@@ -128,7 +148,7 @@ void collision_detection() {
 }
 
 void particle_collision() {
-    for(int i=0;i<n;i++){
+    for(int i=0;i<n-1;i++){
         for(int j=i+1;j<n;j++){
     float dx=particle[j].x-particle[i].x;
     float dy=particle[j].y-particle[i].y;
